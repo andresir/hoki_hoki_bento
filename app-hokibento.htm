@@ -1,0 +1,159 @@
+<script>
+    //=======> BUAT OBJECT HISTORY TRANSAKSI
+    var transaksi = (param1, param2) => {
+        return {
+            waktu_trx: param1,
+            detail_trx: param2
+        };
+    }
+    var list_transaksi = [];
+
+    //========> BUAT OBJECT PRODUK
+    var produk = (param1, param2) => {
+        return {
+            paket: param1,
+            harga: param2
+        };
+    }
+
+    //=========> INJECT PRODUK KE ARRAY
+    var daftar_produk = [];
+    var jumlah_produk = 3;
+    var produk1 = produk('Paket A', 10000);
+    var produk2 = produk('Paket B', 15000);
+    var produk3 = produk('Paket C', 20000);
+    for (let i = 0; i < jumlah_produk; i++) {
+        daftar_produk.push(produk[i]);
+    }
+
+    //=========> INJECT MAIN MENU
+    var no_menu = [1, 2, 3, 4, 5];
+    var main_menu = ['Lihat menu', 'Lihat cart', 'Checkout', 'History trx', 'Logout'];
+
+    var list_menu = '';
+    for (let i = 0; i < no_menu.length; i++) {
+        list_menu += no_menu[i] + '. ' + main_menu[i] + '\n';
+    }
+
+    //=======> BUAT ARRAY CART
+    var isi_cart = [];
+
+    //=======> BUAT OBJECT CART
+    var cart = (param1, param2, param3) => {
+        return {
+            paket: param1,
+            harga: param2,
+            qty: param3
+        };
+    }
+
+    //======> FUNCTION SHOW CART
+    var show_cart = (status) => {
+
+        let list = '';
+        let subtotal = [];
+        let total = 0;
+
+        if (status == 0) {
+            for (let i = 0; i < isi_cart.length; i++) {
+
+                list += isi_cart[i].paket +
+                    ' Rp ' + isi_cart[i].harga +
+                    ' Qty: ' + isi_cart[i].qty + '\n';
+
+            }
+            return list;
+        } else {
+            for (let i = 0; i < isi_cart.length; i++) {
+
+                subtotal[i] = isi_cart[i].harga * isi_cart[i].qty;
+                total += subtotal[i];
+                list += isi_cart[i].paket +
+                    ' Rp ' + isi_cart[i].harga +
+                    ' Qty: ' + isi_cart[i].qty +
+                    ' Subtotal: Rp ' + subtotal[i] + '\n';
+
+            }
+            return {
+                list: list,
+                total: total
+            };
+        }
+
+    }
+    do {
+        alert('Selamat datang di Hoki Hoki Bento');
+        do {
+            var pilih_menu = prompt('Main menu:\n' + list_menu);
+
+            if (pilih_menu == 1) {
+                var lihat_menu = prompt('1. Paket A Rp 10000\n' +
+                    '2. Paket B Rp 15000\n' +
+                    '3. Paket C Rp 20000\n' +
+                    'Silahkan pilih paket:');
+                if (lihat_menu == 1) {
+                    paket = 'Paket A';
+                    harga = 10000;
+                } else if (lihat_menu == 2) {
+                    paket = 'Paket B';
+                    harga = 15000;
+                } else if (lihat_menu == 3) {
+                    paket = 'Paket C';
+                    harga = 20000;
+                }
+                var qty = prompt('Masukkan QTY ' + paket + ' Rp ' + harga);
+
+                var cart1 = cart(paket, harga, qty);
+                isi_cart.push(cart1);
+                //alert(JSON.stringify(isi_cart));
+
+                back = 1;
+
+            } else if (pilih_menu == 2) {
+                //alert(JSON.stringify(isi_cart));
+                alert('ISI CART ANDA: \n' + show_cart(0));
+                back = 1;
+            } else if (pilih_menu == 3) {
+                var total1 = show_cart(1);
+                var bayar = parseInt(prompt('CHECKOUT: \n' + total1.list + 
+                                        'GRAND TOTAL: Rp ' + total1.total +
+                                        '\nMasukkan jumlah uang: '));
+                    
+                while (bayar < total1.total) {
+                    bayar = prompt('Pembayaran kurang, mohon input lagi: ');
+                }
+                
+                var kembalian = bayar - total1.total;
+
+                alert('Kembalian Anda: Rp ' + kembalian + '\n *jangan lupa senyum*');
+
+                isi_cart.length = 0;
+
+                var currentdate = new Date();
+                var datetime = "Trx time: " + currentdate.getDate() + "/" +
+                    (currentdate.getMonth() + 1) + "/" +
+                    currentdate.getFullYear() + " @ " +
+                    currentdate.getHours() + ":" +
+                    currentdate.getMinutes() + ":" +
+                    currentdate.getSeconds();
+
+                var detail_trx = total1.list + 'GRAND TOTAL: Rp ' + total1.total +
+                                '\nPEMBAYARAN: Rp' + bayar + '\nKEMBALIAN: Rp ' + kembalian;
+
+                var trx1 = transaksi(datetime, detail_trx);
+                list_transaksi.push(trx1);
+
+                back = 1;
+            } else if (pilih_menu == 4) {
+                var list = '';
+                for (let i = 0; i < list_transaksi.length; i++) {
+                    list += list_transaksi[i].waktu_trx + '\n' + list_transaksi[i].detail_trx + '\n\n';
+                }
+                alert(list);
+            } else {
+                logout = 1;
+                back = 0;
+            }
+        } while (back == 1);
+    } while (logout == 1);
+</script>
